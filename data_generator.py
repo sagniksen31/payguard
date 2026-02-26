@@ -70,10 +70,20 @@ def generate_row(issue_type: str) -> dict:
     }
 
 
-def generate_dataset(n_samples: int = 1000, seed: int = 42) -> pd.DataFrame:
-    """Generate a balanced synthetic dataset."""
-    random.seed(seed)
-    np.random.seed(seed)
+def generate_dataset(n_samples: int = 1000, seed: int | None = 42) -> pd.DataFrame:
+    """
+    Generate a balanced synthetic dataset.
+
+    Args:
+        n_samples: Number of records to generate.
+        seed:      RNG seed for reproducibility.
+                   Pass 42   (default) for Stable Demo Mode — identical output every run.
+                   Pass None           for Live Simulation Mode — different output each run.
+    """
+    if seed is not None:
+        random.seed(seed)
+        np.random.seed(seed)
+    # If seed is None the global RNG state is used as-is (true randomness).
 
     rows = []
     per_class = n_samples // len(ISSUE_TYPES)
