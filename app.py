@@ -33,57 +33,75 @@ st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=DM+Sans:wght@300;400;500;600;700&display=swap');
 
-/* ── Design tokens ──────────────────────────────────────────────────────── */
+/* ═══════════════════════════════════════════════════════════════════════════
+   DESIGN TOKENS  —  refined fintech palette
+   ═══════════════════════════════════════════════════════════════════════════ */
 :root {
-  --bg-base:        #080c14;
-  --bg-surface:     #0d1220;
-  --bg-raised:      #111827;
-  --bg-overlay:     #1a2235;
-  --border-subtle:  #1e2d47;
-  --border-default: #243450;
-  --border-strong:  #2d4166;
+  /* ── Surface hierarchy: 4 clearly-separated stops ── */
+  --bg-base:        #0B1220;   /* page canvas                          */
+  --bg-surface:     #0F172A;   /* sidebar, header card                 */
+  --bg-card:        #111827;   /* KPI cards, panel backgrounds         */
+  --bg-elevated:    #1F2937;   /* expander content, form fields        */
+  --bg-overlay:     #263347;   /* inline callout boxes                 */
 
-  --text-primary:   #e8edf5;
-  --text-secondary: #8fa3c0;
-  --text-muted:     #4d6380;
+  /* ── Borders: two neutral stops, no blue tinting ── */
+  --border-subtle:  #2A3446;
+  --border-default: #374558;
 
-  --accent-blue:    #3d8ef0;
-  --accent-glow:    rgba(61,142,240,0.10);
-  --accent-ice:     #a8c8ff;
+  /* ── Text ── */
+  --text-primary:   #F9FAFB;
+  --text-secondary: #9CA3AF;
+  --text-muted:     #6B7280;
 
-  --status-red:          #f05252;
-  --status-red-bg:       rgba(240,82,82,0.07);
-  --status-red-border:   rgba(240,82,82,0.22);
+  /* ── Primary accent: one blue, used sparingly ── */
+  --primary:        #3B82F6;
+  --primary-dim:    rgba(59,130,246,0.10);
+  --primary-border: rgba(59,130,246,0.25);
 
-  --status-amber:        #f0a030;
-  --status-amber-bg:     rgba(240,160,48,0.07);
-  --status-amber-border: rgba(240,160,48,0.22);
+  /* ── Semantic status signals ── */
+  --success:        #22C55E;
+  --success-bg:     rgba(34,197,94,0.08);
+  --success-border: rgba(34,197,94,0.20);
 
-  --status-green:        #34c77b;
-  --status-green-bg:     rgba(52,199,123,0.07);
-  --status-green-border: rgba(52,199,123,0.22);
+  --warning:        #F59E0B;
+  --warning-bg:     rgba(245,158,11,0.08);
+  --warning-border: rgba(245,158,11,0.20);
 
-  --gold:      #c8a84b;
-  --gold-glow: rgba(200,168,75,0.15);
+  --danger:         #EF4444;
+  --danger-bg:      rgba(239,68,68,0.08);
+  --danger-border:  rgba(239,68,68,0.20);
 
+  /* ── Section-rule accent (gold) — only used in .pg-section-label::before ── */
+  --gold: #CA8A04;
+
+  /* ── Typography ── */
   --font-mono: 'DM Mono', 'Courier New', monospace;
   --font-sans: 'DM Sans', system-ui, sans-serif;
 
+  /* ── Geometry ── */
   --radius-sm: 4px;
   --radius-md: 8px;
   --radius-lg: 12px;
+
+  /* ── Shadows: real depth, not glow ── */
+  --shadow-card:     0 1px 3px rgba(0,0,0,0.45), 0 1px 2px rgba(0,0,0,0.30);
+  --shadow-raised:   0 4px 8px rgba(0,0,0,0.55), 0 2px 4px rgba(0,0,0,0.35);
 }
 
-/* ── Global ─────────────────────────────────────────────────────────────── */
+/* ═══════════════════════════════════════════════════════════════════════════
+   GLOBAL
+   ═══════════════════════════════════════════════════════════════════════════ */
 html, body, [class*="css"] {
   font-family: var(--font-sans) !important;
-  background-color: var(--bg-base);
+  background-color: var(--bg-base) !important;
   color: var(--text-primary);
 }
 .main .block-container {
   padding: 1.25rem 2rem 3rem 2rem !important;
   max-width: 1600px !important;
 }
+
+/* ── Typography scale ─────────────────────────────────────────────────────── */
 h1, h2, h3, h4, h5 {
   font-family: var(--font-mono) !important;
   letter-spacing: -0.02em;
@@ -95,34 +113,78 @@ h3 { font-size: 1.0rem  !important; font-weight: 400 !important; }
 h4 { font-size: 0.85rem !important; font-weight: 400 !important; }
 p  { font-size: 0.85rem; color: var(--text-secondary); }
 
-/* ── Sidebar ────────────────────────────────────────────────────────────── */
+/* ═══════════════════════════════════════════════════════════════════════════
+   SIDEBAR
+   ═══════════════════════════════════════════════════════════════════════════ */
 [data-testid="stSidebar"] {
   background: var(--bg-surface) !important;
   border-right: 1px solid var(--border-subtle) !important;
 }
 [data-testid="stSidebar"] > div:first-child { padding-top: 0.75rem; }
 [data-testid="stSidebar"] p,
-[data-testid="stSidebar"] label { color: var(--text-secondary) !important; font-size: 0.78rem !important; }
-[data-testid="stSidebar"] hr   { border-color: var(--border-subtle) !important; margin: 0.85rem 0; }
+[data-testid="stSidebar"] label {
+  color: var(--text-secondary) !important;
+  font-size: 0.78rem !important;
+}
+[data-testid="stSidebar"] hr {
+  border-color: var(--border-subtle) !important;
+  margin: 0.85rem 0;
+}
 
-/* ── Metric cards ───────────────────────────────────────────────────────── */
-[data-testid="metric-container"] {
-  background: var(--bg-raised) !important;
+/* ═══════════════════════════════════════════════════════════════════════════
+   KPI METRIC CARDS
+   Problems fixed: flat look, border blending into bg, no elevation.
+   Solution: bg-card (#111827) on bg-base (#0B1220) gives clear separation.
+             Real box-shadow creates depth. Accent bar is a narrow 32px strip
+             instead of a full-width gradient bleed.
+   ═══════════════════════════════════════════════════════════════════════════ */
+/* Remove blue focus/highlight from slider value popover */
+[data-baseweb="slider"] *:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Remove hover/focus blue highlight */
+[data-baseweb="slider"] *:hover {
+  box-shadow: none !important;
+}
+
+/* Style the tooltip bubble itself */
+[data-baseweb="tooltip"] {
+  background-color: var(--bg-raised) !important;
+  color: var(--text-primary) !important;
   border: 1px solid var(--border-default) !important;
+  font-family: var(--font-mono) !important;
+  font-size: 0.7rem !important;
+}
+
+/* Remove blue background from tooltip arrow */
+[data-baseweb="tooltip"] > div {
+  background-color: var(--bg-raised) !important;
+}
+
+[data-testid="metric-container"] {
+  background: var(--bg-card) !important;
+  border: 1px solid var(--border-subtle) !important;
   border-radius: var(--radius-md) !important;
-  padding: 1rem 1.1rem !important;
+  padding: 1rem 1.25rem !important;
+  box-shadow: var(--shadow-card) !important;
   position: relative;
   overflow: hidden;
-  transition: border-color 0.18s ease;
+  transition: box-shadow 0.18s ease, border-color 0.18s ease;
 }
-[data-testid="metric-container"]:hover { border-color: var(--border-strong) !important; }
+[data-testid="metric-container"]:hover {
+  box-shadow: var(--shadow-raised) !important;
+  border-color: var(--border-default) !important;
+}
+/* Narrow left-anchored accent bar — not a full-width glow */
 [data-testid="metric-container"]::before {
   content: '';
   position: absolute;
-  inset: 0 0 auto 0;
-  height: 2px;
-  background: linear-gradient(90deg, var(--accent-blue) 0%, transparent 100%);
-  opacity: 0.55;
+  top: 0; left: 0;
+  width: 32px; height: 2px;
+  background: var(--primary);
+  opacity: 0.75;
 }
 [data-testid="metric-container"] label {
   font-family: var(--font-mono) !important;
@@ -134,7 +196,7 @@ p  { font-size: 0.85rem; color: var(--text-secondary); }
 }
 [data-testid="stMetricValue"] {
   font-family: var(--font-mono) !important;
-  font-size: 1.4rem !important;
+  font-size: 1.45rem !important;
   font-weight: 500 !important;
   color: var(--text-primary) !important;
   line-height: 1.15;
@@ -144,8 +206,12 @@ p  { font-size: 0.85rem; color: var(--text-secondary); }
   font-size: 0.65rem !important;
 }
 
-/* ── Tabs ───────────────────────────────────────────────────────────────── */
-[data-testid="stTabs"] { border-bottom: 1px solid var(--border-subtle); }
+/* ═══════════════════════════════════════════════════════════════════════════
+   TABS
+   ═══════════════════════════════════════════════════════════════════════════ */
+[data-testid="stTabs"] {
+  border-bottom: 1px solid var(--border-subtle);
+}
 button[data-baseweb="tab"] {
   font-family: var(--font-mono) !important;
   font-size: 0.7rem !important;
@@ -158,14 +224,19 @@ button[data-baseweb="tab"] {
   padding: 0.7rem 1.1rem !important;
   transition: color 0.12s ease;
 }
-button[data-baseweb="tab"]:hover { color: var(--text-secondary) !important; }
+button[data-baseweb="tab"]:hover {
+  color: var(--text-secondary) !important;
+}
+/* Active tab: white text + primary underline. No accent-ice bleed. */
 button[data-baseweb="tab"][aria-selected="true"] {
-  color: var(--accent-ice) !important;
-  border-bottom: 2px solid var(--accent-blue) !important;
+  color: var(--text-primary) !important;
+  border-bottom: 2px solid var(--primary) !important;
 }
 [data-testid="stTabPanel"] { padding-top: 1.25rem; }
 
-/* ── Buttons ────────────────────────────────────────────────────────────── */
+/* ═══════════════════════════════════════════════════════════════════════════
+   BUTTONS
+   ═══════════════════════════════════════════════════════════════════════════ */
 .stButton > button {
   font-family: var(--font-mono) !important;
   font-size: 0.72rem !important;
@@ -174,46 +245,76 @@ button[data-baseweb="tab"][aria-selected="true"] {
   letter-spacing: 0.07em;
   border-radius: var(--radius-sm) !important;
   border: 1px solid var(--border-default) !important;
-  background: var(--bg-raised) !important;
+  background: var(--bg-card) !important;
   color: var(--text-secondary) !important;
   transition: all 0.13s ease;
 }
 .stButton > button:hover {
-  border-color: var(--accent-blue) !important;
-  color: var(--accent-ice) !important;
-  background: var(--accent-glow) !important;
+  border-color: var(--primary) !important;
+  color: var(--text-primary) !important;
+  background: var(--primary-dim) !important;
 }
 .stButton > button[kind="primary"] {
-  background: var(--accent-blue) !important;
-  border-color: var(--accent-blue) !important;
+  background: var(--primary) !important;
+  border-color: var(--primary) !important;
   color: #fff !important;
 }
 .stButton > button[kind="primary"]:hover {
-  background: #4a9ef8 !important;
+  background: #5b96f8 !important;
+  border-color: #5b96f8 !important;
 }
 
-/* ── Form inputs ────────────────────────────────────────────────────────── */
+/* ═══════════════════════════════════════════════════════════════════════════
+   FORM INPUTS
+   ═══════════════════════════════════════════════════════════════════════════ */
 .stTextInput > div > div > input,
 .stNumberInput > div > div > input,
 .stSelectbox > div > div,
 .stTextArea > div > textarea {
   font-family: var(--font-mono) !important;
   font-size: 0.8rem !important;
-  background: var(--bg-raised) !important;
-  border: 1px solid var(--border-default) !important;
+  background: var(--bg-elevated) !important;
+  border: 1px solid var(--border-subtle) !important;
   border-radius: var(--radius-sm) !important;
   color: var(--text-primary) !important;
 }
 .stSelectbox > div > div > div { color: var(--text-primary) !important; }
 
-/* ── Dataframes ─────────────────────────────────────────────────────────── */
+/* ═══════════════════════════════════════════════════════════════════════════
+   SLIDER
+   Problem: a single overly-broad selector coloured every child div blue,
+            which made the whole widget look like selected/highlighted text.
+   Fix: target each BaseWeb sub-element individually.
+        Track (bg) = neutral border colour.
+        Fill (left of thumb) = --primary.
+        Thumb = --primary with a card-coloured inner ring (no text-select look).
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Slider ─────────────────────────────────────────────────────────────────
+   Single proven selector — paints the fill divs primary blue.
+   No extra rules: they cause rectangle artefacts. */
+[data-testid="stSlider"] > div > div > div { background: var(--primary) !important; }
+/* Hide only min/max labels (not tooltip value) */
+[data-testid="stSlider"] > div > div:last-child {
+  display: none !important;
+}
+[data-testid="stSlider"] p {
+  font-family: var(--font-mono) !important;
+  font-size: 0.65rem !important;
+  color: var(--text-muted) !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   DATAFRAMES
+   ═══════════════════════════════════════════════════════════════════════════ */
 [data-testid="stDataFrame"] {
   border: 1px solid var(--border-subtle) !important;
   border-radius: var(--radius-md) !important;
   overflow: hidden;
+  box-shadow: var(--shadow-card);
 }
 [data-testid="stDataFrame"] th {
-  background: var(--bg-overlay) !important;
+  background: var(--bg-elevated) !important;
   color: var(--text-muted) !important;
   text-transform: uppercase;
   letter-spacing: 0.07em;
@@ -227,16 +328,21 @@ button[data-baseweb="tab"][aria-selected="true"] {
   border-color: var(--border-subtle) !important;
 }
 
-/* ── Expanders ──────────────────────────────────────────────────────────── */
+/* ═══════════════════════════════════════════════════════════════════════════
+   EXPANDERS
+   ═══════════════════════════════════════════════════════════════════════════ */
 [data-testid="stExpander"] {
+  background: var(--bg-card) !important;
   border: 1px solid var(--border-subtle) !important;
   border-radius: var(--radius-md) !important;
-  background: var(--bg-surface) !important;
   margin-bottom: 5px !important;
   overflow: hidden;
+  box-shadow: var(--shadow-card);
   transition: border-color 0.13s ease;
 }
-[data-testid="stExpander"]:hover { border-color: var(--border-default) !important; }
+[data-testid="stExpander"]:hover {
+  border-color: var(--border-default) !important;
+}
 [data-testid="stExpander"] summary {
   font-family: var(--font-mono) !important;
   font-size: 0.76rem !important;
@@ -244,23 +350,31 @@ button[data-baseweb="tab"][aria-selected="true"] {
   padding: 0.55rem 0.85rem !important;
 }
 [data-testid="stExpanderDetails"] {
-  background: var(--bg-raised) !important;
+  background: var(--bg-elevated) !important;
   border-top: 1px solid var(--border-subtle) !important;
   padding: 0.9rem !important;
 }
 
-/* ── Code blocks ────────────────────────────────────────────────────────── */
+/* ═══════════════════════════════════════════════════════════════════════════
+   CODE BLOCKS
+   ═══════════════════════════════════════════════════════════════════════════ */
 .stCode > div, pre {
   background: var(--bg-base) !important;
   border: 1px solid var(--border-subtle) !important;
   border-radius: var(--radius-sm) !important;
   font-family: var(--font-mono) !important;
   font-size: 0.72rem !important;
-  color: #7eb8f7 !important;
+  /* Slightly muted code colour — was pure #7eb8f7 (too blue) */
+  color: #93C5FD !important;
 }
 
-/* ── Misc Streamlit ─────────────────────────────────────────────────────── */
-hr { border-color: var(--border-subtle) !important; margin: 1.25rem 0 !important; }
+/* ═══════════════════════════════════════════════════════════════════════════
+   MISC STREAMLIT WIDGETS
+   ═══════════════════════════════════════════════════════════════════════════ */
+hr {
+  border-color: var(--border-subtle) !important;
+  margin: 1.25rem 0 !important;
+}
 .stCaption, [data-testid="stCaptionContainer"] {
   font-family: var(--font-mono) !important;
   font-size: 0.66rem !important;
@@ -272,14 +386,15 @@ hr { border-color: var(--border-subtle) !important; margin: 1.25rem 0 !important
   font-size: 0.76rem !important;
   color: var(--text-secondary) !important;
 }
-[data-testid="stSpinner"] > div { border-top-color: var(--accent-blue) !important; }
-[data-testid="stSlider"] > div > div > div { background: var(--accent-blue) !important; }
+[data-testid="stSpinner"] > div {
+  border-top-color: var(--primary) !important;
+}
 
-/* ══════════════════════════════════════════════════════════════════════════
-   CUSTOM COMPONENT CLASSES
-   ══════════════════════════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════════════════════════════
+   CUSTOM COMPONENT CLASSES  (all colour references migrated to new tokens)
+   ═══════════════════════════════════════════════════════════════════════════ */
 
-/* Header bar */
+/* ── Header bar ────────────────────────────────────────────────────────────── */
 .pg-header {
   display: flex;
   align-items: center;
@@ -291,14 +406,21 @@ hr { border-color: var(--border-subtle) !important; margin: 1.25rem 0 !important
   margin-bottom: 1.25rem;
   position: relative;
   overflow: hidden;
+  box-shadow: var(--shadow-card);
 }
+/* Single-colour accent rule — primary blue only, no gold bleed */
 .pg-header::after {
   content: '';
   position: absolute;
-  inset: 0 0 auto 0;
-  height: 1px;
-  background: linear-gradient(90deg, transparent 0%, var(--accent-blue) 40%, var(--gold) 70%, transparent 100%);
-  opacity: 0.45;
+  top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--primary) 30%,
+    rgba(59,130,246,0.3) 65%,
+    transparent 100%
+  );
+  opacity: 0.55;
 }
 .pg-logo {
   font-family: var(--font-mono);
@@ -307,7 +429,7 @@ hr { border-color: var(--border-subtle) !important; margin: 1.25rem 0 !important
   color: var(--text-primary);
   letter-spacing: -0.03em;
 }
-.pg-logo span { color: var(--accent-blue); }
+.pg-logo span { color: var(--primary); }
 .pg-tagline {
   font-family: var(--font-mono);
   font-size: 0.64rem;
@@ -327,29 +449,31 @@ hr { border-color: var(--border-subtle) !important; margin: 1.25rem 0 !important
   display: inline-block;
   width: 7px; height: 7px;
   border-radius: 50%;
-  background: var(--status-green);
-  box-shadow: 0 0 7px var(--status-green);
+  background: var(--success);
+  /* Dimmer glow — was too intense */
+  box-shadow: 0 0 5px rgba(34,197,94,0.5);
   margin-right: 5px;
   animation: blink 2.4s infinite;
 }
-@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.35} }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
 .pg-timestamp {
   font-family: var(--font-mono);
   font-size: 0.68rem;
   color: var(--text-muted);
 }
+/* Model badge: neutral surface, no blue background */
 .pg-model-badge {
   font-family: var(--font-mono);
   font-size: 0.62rem;
-  color: var(--accent-blue);
-  background: var(--accent-glow);
-  border: 1px solid rgba(61,142,240,0.2);
+  color: var(--text-secondary);
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-default);
   border-radius: 3px;
   padding: 2px 8px;
   letter-spacing: 0.05em;
 }
 
-/* Section label */
+/* ── Section label ─────────────────────────────────────────────────────────── */
 .pg-section-label {
   display: flex;
   align-items: center;
@@ -367,14 +491,13 @@ hr { border-color: var(--border-subtle) !important; margin: 1.25rem 0 !important
 .pg-section-label::before {
   content: '';
   display: block;
-  width: 3px;
-  height: 11px;
+  width: 3px; height: 11px;
   background: var(--gold);
   border-radius: 2px;
   flex-shrink: 0;
 }
 
-/* Mode panel header */
+/* ── Mode panel header ─────────────────────────────────────────────────────── */
 .pg-mode-header {
   display: flex;
   align-items: center;
@@ -386,44 +509,77 @@ hr { border-color: var(--border-subtle) !important; margin: 1.25rem 0 !important
   font-size: 0.75rem;
   letter-spacing: 0.03em;
 }
-.pg-mode-header.red   { background: var(--status-red-bg);   border: 1px solid var(--status-red-border);   color: var(--status-red);   }
-.pg-mode-header.amber { background: var(--status-amber-bg); border: 1px solid var(--status-amber-border); color: var(--status-amber); }
-.pg-mode-header.green { background: var(--status-green-bg); border: 1px solid var(--status-green-border); color: var(--status-green); }
-.pg-mode-count   { font-size: 1.0rem; font-weight: 500; margin-left: auto; }
-.pg-mode-impact  { font-size: 0.67rem; opacity: 0.72; }
+.pg-mode-header.red {
+  background: var(--danger-bg);
+  border: 1px solid var(--danger-border);
+  color: var(--danger);
+}
+.pg-mode-header.amber {
+  background: var(--warning-bg);
+  border: 1px solid var(--warning-border);
+  color: var(--warning);
+}
+.pg-mode-header.green {
+  background: var(--success-bg);
+  border: 1px solid var(--success-border);
+  color: var(--success);
+}
+.pg-mode-count  { font-size: 1.0rem; font-weight: 500; margin-left: auto; }
+.pg-mode-impact { font-size: 0.67rem; opacity: 0.72; }
 
-/* Incident detail grid */
+/* ── Incident detail grid ──────────────────────────────────────────────────── */
 .pg-detail-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 0.45rem 1.25rem;
   margin-bottom: 0.65rem;
 }
-.pg-detail-row  { font-family: var(--font-mono); font-size: 0.73rem; display: flex; gap: 0.4rem; align-items: baseline; }
-.pg-detail-key  { color: var(--text-muted); font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.07em; white-space: nowrap; flex-shrink: 0; }
-.pg-detail-val  { color: var(--text-primary); }
+.pg-detail-row {
+  font-family: var(--font-mono);
+  font-size: 0.73rem;
+  display: flex;
+  gap: 0.4rem;
+  align-items: baseline;
+}
+.pg-detail-key {
+  color: var(--text-muted);
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.pg-detail-val { color: var(--text-primary); }
 
-/* Confidence pill */
-.conf-pill { font-family: var(--font-mono); font-size: 0.63rem; padding: 1px 6px; border-radius: 3px; display: inline-block; }
-.conf-high { color: var(--status-green); background: var(--status-green-bg); border: 1px solid var(--status-green-border); }
-.conf-med  { color: var(--status-amber); background: var(--status-amber-bg); border: 1px solid var(--status-amber-border); }
-.conf-low  { color: var(--status-red);   background: var(--status-red-bg);   border: 1px solid var(--status-red-border);   }
+/* ── Confidence pills ──────────────────────────────────────────────────────── */
+.conf-pill {
+  font-family: var(--font-mono);
+  font-size: 0.63rem;
+  padding: 1px 6px;
+  border-radius: 3px;
+  display: inline-block;
+}
+.conf-high { color: var(--success); background: var(--success-bg); border: 1px solid var(--success-border); }
+.conf-med  { color: var(--warning); background: var(--warning-bg); border: 1px solid var(--warning-border); }
+.conf-low  { color: var(--danger);  background: var(--danger-bg);  border: 1px solid var(--danger-border);  }
 
-/* Action box */
+/* ── Action box ────────────────────────────────────────────────────────────── */
+/* Was: accent-ice text on blue-tinted bg = blue overload.
+   Now: primary text on elevated surface with a left rule. */
 .pg-action-box {
-  background: var(--bg-overlay);
+  background: var(--bg-elevated);
   border: 1px solid var(--border-default);
-  border-left: 3px solid var(--accent-blue);
+  border-left: 3px solid var(--primary);
   border-radius: var(--radius-sm);
   padding: 0.55rem 0.8rem;
   font-family: var(--font-mono);
   font-size: 0.72rem;
-  color: var(--accent-ice);
+  color: var(--text-primary);
   line-height: 1.5;
   margin-top: 0.5rem;
 }
 
-/* Sidebar branding */
+/* ── Sidebar branding ──────────────────────────────────────────────────────── */
 .pg-sidebar-logo {
   font-family: var(--font-mono);
   font-size: 0.95rem;
@@ -432,7 +588,7 @@ hr { border-color: var(--border-subtle) !important; margin: 1.25rem 0 !important
   letter-spacing: -0.02em;
   padding: 0.35rem 0 0.2rem 0;
 }
-.pg-sidebar-logo span { color: var(--accent-blue); }
+.pg-sidebar-logo span { color: var(--primary); }
 .pg-sidebar-tagline {
   font-family: var(--font-mono);
   font-size: 0.58rem;
@@ -445,15 +601,13 @@ hr { border-color: var(--border-subtle) !important; margin: 1.25rem 0 !important
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 3px 0;
+  padding: 4px 0;
   border-bottom: 1px solid var(--border-subtle);
   font-family: var(--font-mono);
   font-size: 0.68rem;
 }
 .pg-sidebar-stat-key { color: var(--text-muted); }
 .pg-sidebar-stat-val { color: var(--text-primary); font-weight: 500; }
-
-/* Section headers in sidebar */
 .pg-sb-section {
   font-family: var(--font-mono);
   font-size: 0.6rem;
@@ -463,7 +617,7 @@ hr { border-color: var(--border-subtle) !important; margin: 1.25rem 0 !important
   margin: 0.9rem 0 0.45rem 0;
 }
 
-/* Empty / idle state */
+/* ── Empty / idle state ────────────────────────────────────────────────────── */
 .pg-empty-state {
   text-align: center;
   padding: 3rem 1rem;
@@ -476,12 +630,13 @@ hr { border-color: var(--border-subtle) !important; margin: 1.25rem 0 !important
 }
 .pg-empty-icon { font-size: 2rem; display: block; margin-bottom: 0.5rem; }
 
-/* Chart card wrapper */
+/* ── Chart card ────────────────────────────────────────────────────────────── */
 .pg-chart-card {
-  background: var(--bg-raised);
-  border: 1px solid var(--border-default);
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
   padding: 0.9rem 1rem;
+  box-shadow: var(--shadow-card);
 }
 .pg-chart-title {
   font-family: var(--font-mono);
@@ -492,16 +647,29 @@ hr { border-color: var(--border-subtle) !important; margin: 1.25rem 0 !important
   margin-bottom: 0.65rem;
 }
 
-/* Feedback form card */
+/* ── Feedback form card ────────────────────────────────────────────────────── */
 .pg-form-card {
-  background: var(--bg-overlay);
+  background: var(--bg-elevated);
   border: 1px solid var(--border-default);
   border-radius: var(--radius-md);
   padding: 1rem 1.1rem;
   margin-bottom: 0.5rem;
+  box-shadow: var(--shadow-card);
 }
-.pg-form-label { font-family: var(--font-mono); font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); margin-bottom: 2px; }
-.pg-form-value { font-family: var(--font-mono); font-size: 0.82rem; color: var(--text-primary); margin-bottom: 0.55rem; }
+.pg-form-label {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  margin-bottom: 2px;
+}
+.pg-form-value {
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  color: var(--text-primary);
+  margin-bottom: 0.55rem;
+}
 </style>
 """, unsafe_allow_html=True)
 
@@ -514,6 +682,7 @@ from pipeline import (
     run_pipeline, ensure_model_trained,
     get_automation_metrics, detect_repeat_atms,
     ML_CONFIDENCE_THRESHOLD,
+    STABLE_DEMO, LIVE_SIM,
 )
 from impact_scorer import impact_label
 from feedback_store import save_feedback, load_feedback, get_accuracy_summary
@@ -524,9 +693,28 @@ from log_store import load_logs, get_log_summary
 #  UTILITIES
 # ─────────────────────────────────────────────────────────────────────────────
 @st.cache_resource(show_spinner="Initialising ML model…")
-def boot_model():
-    ensure_model_trained()
+def _boot_model_stable():
+    """
+    Cache-backed boot for Stable Demo Mode.
+    Runs once per browser session — loads from disk or trains with seed=42.
+    """
+    ensure_model_trained(STABLE_DEMO)
     return True
+
+
+def boot_model(execution_mode: str = STABLE_DEMO) -> None:
+    """
+    Guarantee a trained model is in place before any UI is rendered.
+
+    Stable Demo  → @st.cache_resource, runs once per session.
+    Live Sim     → trains fresh with random_state=None on every page load;
+                   not cached so each refresh gets a new model.
+    """
+    if execution_mode == LIVE_SIM:
+        with st.spinner("Live Simulation — training fresh model…"):
+            ensure_model_trained(LIVE_SIM)
+    else:
+        _boot_model_stable()
 
 
 def fmt_inr(val: float) -> str:
@@ -702,6 +890,30 @@ with st.sidebar:
     st.divider()
 
     st.markdown('<div class="pg-sb-section">⚙ Configuration</div>', unsafe_allow_html=True)
+
+    # ── Execution Mode toggle ─────────────────────────────────────────────────
+    execution_mode = st.radio(
+        "Execution Mode",
+        [STABLE_DEMO, LIVE_SIM],
+        index=0,
+        key="execution_mode",
+        help=(
+            "Stable Demo: fixed seed everywhere — identical results every run.\n"
+            "Live Simulation: no seeding — model retrains fresh, outcomes vary."
+        ),
+    )
+    # Note: session state is managed automatically by the key= argument above.
+    # Do NOT write st.session_state["execution_mode"] here — Streamlit owns that
+    # slot once the widget is instantiated and will raise StreamlitAPIException.
+
+    # Visual cue under the toggle
+    if execution_mode == STABLE_DEMO:
+        st.caption("🔒 Deterministic · seed=42 · reproducible")
+    else:
+        st.caption("🎲 Randomised · fresh retrain each run")
+
+    st.divider()
+
     confidence_threshold = st.slider(
         "ML Confidence Floor",
         min_value=0.40, max_value=0.95,
@@ -754,7 +966,7 @@ with st.sidebar:
 # ─────────────────────────────────────────────────────────────────────────────
 #  HEADER BAR
 # ─────────────────────────────────────────────────────────────────────────────
-boot_model()
+boot_model(execution_mode)
 now_str = datetime.datetime.now().strftime("%d %b %Y  %H:%M")
 
 st.markdown(
@@ -768,7 +980,7 @@ st.markdown(
         <div class="pg-timestamp">
           <span class="pg-live-dot"></span>LIVE &nbsp;·&nbsp; {now_str}
         </div>
-        <div class="pg-model-badge">RandomForest · 5-Layer Pipeline</div>
+        <div class="pg-model-badge">RandomForest · {execution_mode}</div>
       </div>
     </div>
     """,
@@ -793,7 +1005,10 @@ if mode == "Generate Demo Data":
     if generate_btn or "demo_df" in st.session_state:
         if generate_btn:
             with st.spinner("Generating batch and running 5-layer pipeline…"):
-                raw_df = generate_dataset(n)
+                # Stable Demo: fixed seed → identical batch every run.
+                # Live Sim:   seed=None → different batch every run.
+                gen_seed = 42 if execution_mode == STABLE_DEMO else None
+                raw_df = generate_dataset(n, seed=gen_seed)
                 st.session_state["demo_df"] = raw_df
         else:
             raw_df = st.session_state["demo_df"]
@@ -839,7 +1054,11 @@ elif mode == "Manual Entry":
 # ─────────────────────────────────────────────────────────────────────────────
 if raw_df is not None:
     with st.spinner("Running pipeline: classify → score → escalate → automate → persist…"):
-        result_df   = run_pipeline(raw_df, confidence_threshold=confidence_threshold)
+        result_df   = run_pipeline(
+            raw_df,
+            confidence_threshold=confidence_threshold,
+            execution_mode=execution_mode,
+        )
     st.session_state["result_df"] = result_df
 
     auto_metrics  = get_automation_metrics(result_df)
