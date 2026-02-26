@@ -37,8 +37,15 @@ def encode_features(df: pd.DataFrame) -> pd.DataFrame:
     return df, code_map
 
 
-def train(df: pd.DataFrame) -> dict:
-    """Train the RandomForest classifier and persist it."""
+def train(df: pd.DataFrame, random_state: int | None = 42) -> dict:
+    """
+    Train the RandomForest classifier and persist it.
+
+    Args:
+        random_state: Seed for reproducibility.
+                      Pass 42  (default) for Stable Demo Mode — fully deterministic.
+                      Pass None         for Live Simulation Mode — true randomness.
+    """
     os.makedirs("model", exist_ok=True)
 
     df, code_map = encode_features(df)
@@ -48,13 +55,13 @@ def train(df: pd.DataFrame) -> dict:
     X = df[FEATURE_COLS].values
 
     X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=0.2, random_state=42, stratify=y
+        X, y, test_size=0.2, random_state=random_state, stratify=y
     )
 
     clf = RandomForestClassifier(
         n_estimators=100,
         max_depth=10,
-        random_state=42,
+        random_state=random_state,
         class_weight="balanced",
     )
     clf.fit(X_train, y_train)
