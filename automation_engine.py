@@ -216,7 +216,11 @@ def run_automation(
     }
 
 
-def automate_dataframe(df, ml_confidence_threshold: float = 0.60) -> "pd.DataFrame":
+def automate_dataframe(
+    df,
+    ml_confidence_threshold: float = 0.60,
+    deterministic: bool = True,
+) -> "pd.DataFrame":
     """
     Apply automation layer to a full DataFrame.
 
@@ -226,10 +230,15 @@ def automate_dataframe(df, ml_confidence_threshold: float = 0.60) -> "pd.DataFra
         auto_resolution_time_sec : seconds taken (0 if MANUAL_REQUIRED)
         eligibility_reason       : human-readable string explaining gate decision
 
-    ml_confidence_threshold:
-        If a row's ml_confidence value is below this threshold the incident is
-        forced to MANUAL_REQUIRED before any other gate is evaluated.
-        Prevents the automation engine from acting on uncertain predictions.
+    Args:
+        ml_confidence_threshold:
+            Rows whose ml_confidence is below this are forced to MANUAL_REQUIRED
+            before any other gate is evaluated.
+        deterministic:
+            True  (default) — Stable Demo Mode: each row seeded by its index,
+                              so results are identical across runs.
+            False           — Live Simulation Mode: seed=None → outcomes vary
+                              each run, reflecting real-world randomness.
     """
     import pandas as pd
 
@@ -254,13 +263,17 @@ def automate_dataframe(df, ml_confidence_threshold: float = 0.60) -> "pd.DataFra
             continue
 
         # ── Normal automation path ────────────────────────────────────────────
+        # Stable Demo: seed = row index → fully reproducible per-incident outcome.
+        # Live Sim:    seed = None     → random.Random() uses global state → varies.
+        row_seed = idx if deterministic else None
+
         result = run_automation(
             predicted_issue   = row.get("predicted_issue", "unknown"),
             impact_score      = row.get("impact_score", 0),
             downtime_minutes  = row.get("downtime_minutes", 0),
             complaint_count   = row.get("complaint_count", 0),
             escalation_status = row.get("escalation_status", ""),
-            seed              = idx,
+            seed              = row_seed,
         )
         results.append(result)
 
