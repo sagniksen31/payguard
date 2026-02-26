@@ -35,24 +35,50 @@ MODEL_PATH = "model/classifier.pkl"
 # Predictions below this confidence are too uncertain for automation
 ML_CONFIDENCE_THRESHOLD = 0.60
 
+# ── Execution mode constants ──────────────────────────────────────────────────
+# Use these strings everywhere — no magic literals scattered through the codebase.
+STABLE_DEMO = "Stable Demo Mode"
+LIVE_SIM    = "Live Simulation Mode"
 
-def ensure_model_trained() -> None:
-    """Train the model if it hasn't been trained yet."""
-    if not os.path.exists(MODEL_PATH):
-        print("No model found — training on fresh synthetic data …")
-        df = generate_dataset(1000)
+
+def ensure_model_trained(execution_mode: str = STABLE_DEMO) -> None:
+    """
+    Guarantee a trained model is ready before the pipeline runs.
+
+    Stable Demo Mode:
+        Load from disk if it exists (fast, deterministic).
+        If no file exists, train once with seed=42 and persist.
+
+    Live Simulation Mode:
+        Always retrain from scratch with random_state=None.
+        The saved model file is intentionally ignored so each run
+        produces a freshly trained, non-deterministic model.
+    """
+    if execution_mode == LIVE_SIM:
+        # Force a fresh random retrain every run — discard any saved artefact.
+        print("Live Simulation Mode — retraining model with random_state=None …")
+        df = generate_dataset(1000, seed=None)     # unseeded data
         os.makedirs("data", exist_ok=True)
-        df.to_csv("data/training_data.csv", index=False)
-        result = train(df)
-        print(f"Model trained | Accuracy: {result['accuracy']:.1%}")
+        result = train(df, random_state=None)      # unseeded forest
+        print(f"Model retrained | Accuracy: {result['accuracy']:.1%}")
     else:
-        print("Model loaded from disk.")
+        # Stable Demo: load from disk or train once with fixed seed.
+        if not os.path.exists(MODEL_PATH):
+            print("No model found — training on fresh synthetic data …")
+            df = generate_dataset(1000, seed=42)
+            os.makedirs("data", exist_ok=True)
+            df.to_csv("data/training_data.csv", index=False)
+            result = train(df, random_state=42)
+            print(f"Model trained | Accuracy: {result['accuracy']:.1%}")
+        else:
+            print("Stable Demo Mode — model loaded from disk.")
 
 
 def run_pipeline(
     df: pd.DataFrame,
     confidence_threshold: float = ML_CONFIDENCE_THRESHOLD,
     persist_logs: bool = True,
+    execution_mode: str = STABLE_DEMO,
 ) -> pd.DataFrame:
     """
     Full 6-layer pipeline on a DataFrame of raw incidents.
@@ -72,8 +98,12 @@ def run_pipeline(
         df                   : raw incident DataFrame
         confidence_threshold : ML confidence below which → MANUAL_REQUIRED
         persist_logs         : if True, appends results to data/automation_logs.csv
+        execution_mode       : STABLE_DEMO (default) or LIVE_SIM.
+                               Controls seeding of model training, data generation,
+                               and per-row automation outcomes.
     """
-    ensure_model_trained()
+    # Model is guaranteed ready by boot_model() called at app startup.
+    # No retrain here — avoids double-training in Live Sim mode.
 
     # Layer 1: Classification + confidence scores
     df = df.copy()
@@ -87,8 +117,14 @@ def run_pipeline(
     # Layers 3 & 4: Action Recommendation + Escalation
     df = process_dataframe(df)
 
-    # Layer 5: Automation Engine (with ML confidence gate)
-    df = automate_dataframe(df, ml_confidence_threshold=confidence_threshold)
+    # Layer 5: Automation Engine
+    # deterministic=True  → per-row seed = row index (Stable Demo)
+    # deterministic=False → seed=None, outcomes vary per run (Live Sim)
+    df = automate_dataframe(
+        df,
+        ml_confidence_threshold=confidence_threshold,
+        deterministic=(execution_mode == STABLE_DEMO),
+    )
 
     # Layer 6: Persist logs
     if persist_logs:
