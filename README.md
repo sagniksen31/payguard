@@ -120,11 +120,3 @@ Raw Incident Data
 5. Download results CSV to show the output schema
 
 ---
-
-## ⚠️ Constraints Met
-
-- ✅ No deep learning
-- ✅ No cloud dependencies — fully offline
-- ✅ Minimal dependencies (4 packages)
-- ✅ Beginner-friendly modular code
-- ✅ Demo-stable Streamlit UI
